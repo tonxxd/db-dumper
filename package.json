@@ -24,8 +24,7 @@
     "devDependencies": {
         "jest": "^26.4.2"
     },
-    "dependencies": {
-    },
+    "dependencies": {},
     "repository": {
         "type": "git",
         "url": "git+https://github.com/tonxxd/db-dumper.git"

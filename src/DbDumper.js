@@ -48,7 +48,8 @@ class DbDumper {
 
         this.tempFilePath = null;
 
-        this.after = () => {};
+        /** @var function */
+        this.callback = () => {};
     }
 
     static create() {
@@ -103,7 +104,12 @@ class DbDumper {
         return this;
     }
 
-    after(callback) {
+    /**
+     *
+     * @return this
+     * @param callback
+     */
+    setCallback(callback) {
         this.callback = callback;
         return this;
     }
