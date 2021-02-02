@@ -103,8 +103,8 @@ class DbDumper {
         return this;
     }
 
-    setAfter(callback) {
-        this.after = callback;
+    after(callback) {
+        this.callback = callback;
         return this;
     }
 
@@ -284,7 +284,7 @@ class DbDumper {
         } catch (e) {
             //ignore
         }
-        this.after();
+        this.callback();
     }
 
     filesize(filename) {

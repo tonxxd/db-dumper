@@ -16,7 +16,10 @@ MySql.create()
 .setDbName('dbName')
 .setUserName('userName')
 .setPassword('password')
-.dumpToFile('./dump.sql');
+.dumpToFile('./dump.sql')
+.after(()=>{
+    console.log("Done!")
+});
 ```
 
 **PostgreSQL**
@@ -27,7 +30,10 @@ PostgreSql.create()
 .setDbName('dbName')
 .setUserName('userName')
 .setPassword('password')
-.dumpToFile('./dump.sql');
+.dumpToFile('./dump.sql')
+.after(()=>{
+    console.log("Done!")
+});;
 ```
 
 **SQLite**
@@ -36,7 +42,10 @@ PostgreSql.create()
 const { Sqlite } = require('@shagital/db-dumper');
 Sqlite.create()
 .setDbName('path_to_sqlite.sqlite')
-.dumpToFile('dump.sql');
+.dumpToFile('dump.sql')
+.after(()=>{
+    console.log("Done!")
+});;
 ```
 
 **MongoDB**
@@ -46,7 +55,10 @@ const { MongoDb } = require('@shagital/db-dumper');
 MongoDb.create()
 .setDbName('dbName')
 .setCollection('collectionName')
-.dumpToFile('./dump.gz');
+.dumpToFile('./dump.gz')
+.after(()=>{
+    console.log("Done!")
+});;
 ```
 
 ## Requirements
