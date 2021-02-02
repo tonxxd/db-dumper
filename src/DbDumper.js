@@ -1,9 +1,9 @@
-const GzipCompressor = require('./Compressors/GzipCompressor');
-const CannotSetParameter = require('./Exceptions/CannotSetParameter');
-const DumpFailed = require('./Exceptions/DumpFailed');
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
+const GzipCompressor = require("./Compressors/GzipCompressor");
+const CannotSetParameter = require("./Exceptions/CannotSetParameter");
+const DumpFailed = require("./Exceptions/DumpFailed");
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
 
 class DbDumper {
     constructor() {
@@ -17,19 +17,19 @@ class DbDumper {
         this.password = null;
 
         /** @var string */
-        this.host = 'localhost';
+        this.host = "localhost";
 
         /** @var int */
         this.port = 5432;
 
         /** @var string */
-        this.socket = '';
+        this.socket = "";
 
         /** @var int */
         this.timeout = 0;
 
         /** @var string */
-        this.dumpBinaryPath = '';
+        this.dumpBinaryPath = "";
 
         /** @var array */
         this.includeTables = [];
@@ -47,33 +47,35 @@ class DbDumper {
         this.compressor = null;
 
         this.tempFilePath = null;
+
+        this.after = () => {};
     }
 
     static create() {
         return new this();
-    };
+    }
 
     getDbName() {
         return this.dbName;
-    };
+    }
 
     /**
      *
      * @return this
      * @param dbName
      */
-    setDbName (dbName) {
+    setDbName(dbName) {
         this.dbName = dbName;
 
         return this;
-    };
+    }
 
     /**
      *
      * @return this
      * @param userName
      */
-    setUserName (userName) {
+    setUserName(userName) {
         this.userName = userName;
 
         return this;
@@ -84,7 +86,7 @@ class DbDumper {
      * @return this
      * @param password
      */
-    setPassword (password) {
+    setPassword(password) {
         this.password = password;
 
         return this;
@@ -95,13 +97,18 @@ class DbDumper {
      * @return this
      * @param host
      */
-    setHost (host) {
+    setHost(host) {
         this.host = host;
 
         return this;
     }
 
-    getHost () {
+    setAfter(callback) {
+        this.after = callback;
+        return this;
+    }
+
+    getHost() {
         return this.host;
     }
 
@@ -110,7 +117,7 @@ class DbDumper {
      *
      * @return this
      */
-    setPort (port) {
+    setPort(port) {
         this.port = port;
 
         return this;
@@ -121,7 +128,7 @@ class DbDumper {
      *
      * @return this
      */
-    setSocket (socket) {
+    setSocket(socket) {
         this.socket = socket;
 
         return this;
@@ -132,15 +139,15 @@ class DbDumper {
      * @return this
      * @param timeout
      */
-    setTimeout (timeout) {
+    setTimeout(timeout) {
         this.timeout = timeout;
 
         return this;
     }
 
-    setDumpBinaryPath (dumpBinaryPath) {
-        if (dumpBinaryPath !== '' && dumpBinaryPath.substr(-1) !== '/') {
-            dumpBinaryPath += '/';
+    setDumpBinaryPath(dumpBinaryPath) {
+        if (dumpBinaryPath !== "" && dumpBinaryPath.substr(-1) !== "/") {
+            dumpBinaryPath += "/";
         }
 
         this.dumpBinaryPath = dumpBinaryPath;
@@ -153,7 +160,7 @@ class DbDumper {
      *
      * @return this
      */
-    enableCompression () {
+    enableCompression() {
         this.compressor = new GzipCompressor();
 
         return this;
@@ -163,7 +170,7 @@ class DbDumper {
         return this.compressor.useExtension();
     }
 
-    useCompressor (compressor) {
+    useCompressor(compressor) {
         this.compressor = compressor;
 
         return this;
@@ -175,13 +182,16 @@ class DbDumper {
      *
      * @param includeTables
      */
-    setIncludedTables (includeTables) {
+    setIncludedTables(includeTables) {
         if (this.excludeTables.length) {
-            throw CannotSetParameter.conflictingParameters('includeTables', 'excludeTables');
+            throw CannotSetParameter.conflictingParameters(
+                "includeTables",
+                "excludeTables"
+            );
         }
 
         if (!Array.isArray(includeTables)) {
-            includeTables = includeTables.split(',');
+            includeTables = includeTables.split(",");
         }
 
         this.includeTables = includeTables;
@@ -195,13 +205,16 @@ class DbDumper {
      *
      * @param excludeTables
      */
-    setExcludedTables (excludeTables) {
+    setExcludedTables(excludeTables) {
         if (this.includeTables.length) {
-            throw CannotSetParameter.conflictingParameters('excludeTables', 'includeTables');
+            throw CannotSetParameter.conflictingParameters(
+                "excludeTables",
+                "includeTables"
+            );
         }
 
         if (!Array.isArray(excludeTables)) {
-            excludeTables = excludeTables.split(',');
+            excludeTables = excludeTables.split(",");
         }
 
         this.excludeTables = excludeTables;
@@ -210,14 +223,14 @@ class DbDumper {
     }
 
     fwrite(file, content) {
-        const log = fs.createWriteStream(file, {flags: 'a'});
+        const log = fs.createWriteStream(file, { flags: "a" });
         log.write(content);
         log.end();
     }
 
     tempFile(fileName) {
         let fullPath = path.join(os.tmpdir(), fileName);
-        fs.writeFile(fullPath, '', function (err) {
+        fs.writeFile(fullPath, "", function (err) {
             if (err) {
                 throw err;
             }
@@ -230,7 +243,7 @@ class DbDumper {
      * @return this
      * @param extraOption
      */
-    addExtraOption (extraOption) {
+    addExtraOption(extraOption) {
         if (extraOption.length) {
             this.extraOptions.push(extraOption);
         }
@@ -243,7 +256,7 @@ class DbDumper {
      * @return this
      * @param extraOptionAfterDbName
      */
-    addExtraOptionAfterDbName (extraOptionAfterDbName) {
+    addExtraOptionAfterDbName(extraOptionAfterDbName) {
         if (extraOptionAfterDbName.length) {
             this.extraOptionsAfterDbName.push(extraOptionAfterDbName);
         }
@@ -251,10 +264,9 @@ class DbDumper {
         return this;
     }
 
-    dumpToFile (dumpFile) {
-    };
+    dumpToFile(dumpFile) {}
 
-    async checkIfDumpWasSuccessFul (error, outputFile) {
+    async checkIfDumpWasSuccessFul(error, outputFile) {
         if (error) {
             throw DumpFailed.processDidNotEndSuccessfully(error);
         }
@@ -263,23 +275,24 @@ class DbDumper {
             throw DumpFailed.dumpfileWasNotCreated();
         }
 
-        if (await this.filesize(outputFile) === 0) {
+        if ((await this.filesize(outputFile)) === 0) {
             throw DumpFailed.dumpfileWasEmpty();
         }
 
         try {
-            fs.unlinkSync(this.tempFilePath)
+            fs.unlinkSync(this.tempFilePath);
         } catch (e) {
             //ignore
         }
+        this.after();
     }
 
-    filesize (filename) {
-        var stats = fs.statSync(filename)
-        return stats["size"]
+    filesize(filename) {
+        var stats = fs.statSync(filename);
+        return stats["size"];
     }
 
-    getCompressCommand (command, dumpFile) {
+    getCompressCommand(command, dumpFile) {
         let compressCommand = this.compressor.useCommand();
 
         if (this.isWindows()) {
@@ -289,24 +302,25 @@ class DbDumper {
         return `((((${command}; echo $\? >&3) | ${compressCommand} > ${dumpFile}) 3>&1) | (read x; exit \$x))`;
     }
 
-    echoToFile (command, dumpFile) {
+    echoToFile(command, dumpFile) {
         dumpFile = '"' + this.addcslashes(dumpFile, '\\"') + '"';
 
         if (this.compressor) {
             return this.getCompressCommand(command, dumpFile);
         }
 
-        return command + ' > ' + dumpFile;
+        return command + " > " + dumpFile;
     }
 
-    addcslashes (string) {
-        return string.replace(/\\/g, '\\\\')
-            .replace(/\u0008/g, '\\b')
-            .replace(/\t/g, '\\t')
-            .replace(/\n/g, '\\n')
-            .replace(/\f/g, '\\f')
-            .replace(/\r/g, '\\r')
-            .replace(/'/g, '\\\'')
+    addcslashes(string) {
+        return string
+            .replace(/\\/g, "\\\\")
+            .replace(/\u0008/g, "\\b")
+            .replace(/\t/g, "\\t")
+            .replace(/\n/g, "\\n")
+            .replace(/\f/g, "\\f")
+            .replace(/\r/g, "\\r")
+            .replace(/'/g, "\\'")
             .replace(/"/g, '\\"');
     }
 
@@ -314,7 +328,7 @@ class DbDumper {
         return this.isWindows() ? '"' : "'";
     }
 
-    isWindows () {
+    isWindows() {
         return process.platform === "win32";
     }
 }
